@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: SecureNotes
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5433:5432"
+
+  secure-notes-ms:
+    image: surendhar001/notes:latest
+    container_name: secure_notes_app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - microservice-network
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_URL=jdbc:postgresql://db:5432/SecureNotes
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=123456
+      - GITHUB_CLIENT_ID=Ov23liZG54V6104d0oih
+      - GITHUB_CLIENT_SECRET=fc205cce90c363741decdb104f6ef15e11aeba41
+      - MAIL_USERNAME=surendhar4353@gmail.com
+      - MAIL_PASSWORD=hjupojufxcccpnrw
+
+networks:
+  microservice-network:
+    driver: bridge
+  postgres:
+    driver: bridge
